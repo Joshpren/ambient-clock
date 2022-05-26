@@ -2,7 +2,6 @@ import threading
 
 from core.ClockController import ClockController
 from core.ColorsController import ColorController
-from entities.Hand import Hand
 from fsm.StateType import StateType
 
 
