@@ -1,33 +1,16 @@
 class Diode:
 
-    def __init__(self, index):
+    def __init__(self, index, color):
         self.__index = index
-        self.__brightness = 100
-        self.__red = 255
-        self.__blue = 255
-        self.__green = 255
-        self.__white = None
+        self.__color = color
 
     @property
     def index(self):
         return self.__index
 
     @property
-    def brightness(self):
-        return self.__brightness
+    def color(self):
+        return self.__color
 
-    @property
-    def red(self):
-        return self.__red
-
-    @property
-    def blue(self):
-        return self.__blue
-
-    @property
-    def green(self):
-        return self.__green
-
-    @property
-    def white(self):
-        return self.__white
+    def __repr__(self) -> str:
+        return "Diode: " + str(self.index) + ", " + str(self.__color)

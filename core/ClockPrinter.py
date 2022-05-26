@@ -4,9 +4,9 @@ class ClockPrinter:
         self.__alu = alu
 
 
-    def printClock(self, hour_hand_index, minute_hand_index, second_hand_index):
-        stunde = self.__alu.getTimeInHours(hour_hand_index)
-        minute = self.__alu.getTimeInMinutes(minute_hand_index)
-        sekunde = self.__alu.getTimeInSeconds(second_hand_index)
+    def printClock(self, hour_diode, minute_diode, second_diode):
+        stunde = self.__alu.getTimeInHours(hour_diode.index)
+        minute = self.__alu.getTimeInMinutes(minute_diode.index)
+        sekunde = self.__alu.getTimeInSeconds(second_diode.index)
         print("Wir haben:", stunde, "Uhr", minute, "und", sekunde, "Sekunden.", "Stunden-Index:",
-              hour_hand_index, "Minuten-Index:", minute_hand_index, "Sekunden-Index:", second_hand_index)
+              hour_diode.index, "Stundenzeigerfarbe", hour_diode.color, "Minuten-Index:", minute_diode.index, "Minutenzeigerfarbe", minute_diode.color, "Sekunden-Index:", second_diode.index, "Sekundenzeigerfarbe", second_diode.color)

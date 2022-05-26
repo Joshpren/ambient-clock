@@ -1,18 +1,15 @@
 import threading
 
 from core.ClockController import ClockController
+from core.ColorsController import ColorController
 from entities.Hand import Hand
 from fsm.StateType import StateType
 
 
 class Launcher:
 
-    #server = WebServer()
-    #server.start_server()
-    hour_hand = Hand()
-    minute_hand = Hand()
-    second_hand = Hand()
-    controller = ClockController(120, 0, hour_hand, minute_hand, second_hand)
+    color_controller = ColorController()
+    controller = ClockController(12, 0, color_controller)
     clockThread = threading.Thread(target=controller.start, args=())
     clockThread.daemon = True
     clockThread.start()
