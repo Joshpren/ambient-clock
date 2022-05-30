@@ -16,6 +16,18 @@ class ColorController:
         else:
             return self.__colors_to_use
 
+    def red(self, brightness):
+        return Color(brightness, 0, 0)
+
+    def green(self, brightness):
+        return Color(0, brightness, 0)
+
+    def blue(self, brightness):
+        return Color(0, 0, brightness)
+
+    def random(self):
+        return Color.random()
+
     @colors_to_use.setter
     def colors_to_use(self, new_colors_to_use):
         self.__colors_to_use = new_colors_to_use

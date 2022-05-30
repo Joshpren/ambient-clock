@@ -4,13 +4,18 @@ from abc import ABC, abstractmethod
 class State(ABC):
     pass
 
-    def __init__(self, runnable):
-        self.runnable = runnable
+    def __init__(self):
         self.__running = False
+        self.__context = None
 
-    def start(self):
+    def start(self, context):
+        self.__context = context
         self.running(True)
         self.address_leds()
+
+    @property
+    def context(self):
+       return self.__context
 
     @abstractmethod
     def address_leds(self):

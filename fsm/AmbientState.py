@@ -9,11 +9,11 @@ from fsm.State import State
 class AmbientState(State, ABC):
     pass
 
-    def __init__(self, address_led_function, show_diodes_function, switch_to_state_function, number_of_led):
+    def __init__(self, address_led_function, show_diodes_function, switch_to_state_function):
         self.__address_led_function = address_led_function
         self.__show_diodes_function = show_diodes_function
         self.__switch_to_state_function = switch_to_state_function
-        self.__number_of_led = number_of_led
+
 
     def address_leds(self):
         self.color_wipe()
@@ -23,8 +23,8 @@ class AmbientState(State, ABC):
         self.__switch_to_state_function(StateType.sundial_state)
 
     def color_wipe(self):
-        color = Color.random()
-        for index in range(self.__number_of_led):
+        color = self.context.colors_controller.random()
+        for index in range(self.context.number_of_led):
             self.__address_led_function(Diode(index, color))
             self.__show_diodes_function()
             time.sleep(0.2)
