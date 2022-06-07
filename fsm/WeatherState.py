@@ -14,55 +14,40 @@ class WeatherState(State, ABC):
         self.__address_led_function = address_led_function
         self.__show_diodes_function = show_diodes_function
         self.__switch_to_state_function = switch_to_state_function
-        self.__weather_data = None
-        self.__needs_refresh = True
+        self.__register_for_weather_data_function = lambda data: self.__update_weather_data(data)
+        self.__weather_data = []
+
+    def start(self):
+        self.service.weather_data_controller.register_three_hourely_listener(self.__register_for_weather_data_function)
 
     def address_leds(self):
-        if self.__weather_data == None:
-            self.__update_data()
-        self.__refresh_if_required()
-
         for data in self.__weather_data:
-            clock = data[0]
+            hour = data[0]
             temperature = data[1]
-            temperature_index = int(temperature * (self.context.number_of_led/60))
+            temperature_index = int(temperature * (self.service.number_of_led/60))
             if(temperature_index >= 0):
                 for index in range(temperature_index):
-                    self.__address_led_function(Diode(index, self.context.colors_controller.red(100)))
+                    self.__address_led_function(Diode(index, self.service.colors_controller.red(100)))
             else:
                 for index in range(120, 120 + temperature_index, -1):
-                    self.__address_led_function(Diode(index, self.context.colors_controller.blue(100)))
-            print(temperature)
-            hour_index = self.context.arithmetic_logic_unit.determine_index_by_hours(clock, 0)
-            if clock >= 12:
-                self.__address_led_function(Diode(hour_index, self.context.colors_controller.blue(100)))
+                    self.__address_led_function(Diode(index, self.service.colors_controller.blue(100)))
+
+            hour_index = self.service.arithmetic_logic_unit.determine_index_by_hours(hour, 0)
+            if hour >= 12:
+                self.__address_led_function(Diode(hour_index, self.service.colors_controller.blue(100)))
             else:
-                self.__address_led_function(Diode(hour_index, self.context.colors_controller.green(100)))
-            print(clock)
+                self.__address_led_function(Diode(hour_index, self.service.colors_controller.green(100)))
             self.__show_diodes_function()
-            time.sleep(1)
-        print(threading.get_native_id())
+            time.sleep(2)
 
-    def __refresh_if_required(self):
-        new_api_call_required = datetime.datetime.now().minute % 3 == 0  # 500 Calls per day therefore ca. 20 calls per hour
-        if new_api_call_required:
-            if self.__needs_refresh:
-                clockThread = threading.Thread(target=self.__load_data, args=())
-                clockThread.daemon = True
-                clockThread.start()
-                clockThread.join()
-        else:
-            self.__needs_refresh = True
 
-    def __load_data(self):
-        print(threading.get_native_id())
-        self.context.weather_data_controller.load_weather_data()
-        self.__update_data()
 
-    def __update_data(self):
-        self.__weather_data = self.context.weather_data_controller.weather_data
-        self.__needs_refresh = False
+    def __update_weather_data(self, weather_data):
+        self.__weather_data = weather_data
 
     def react_on_motion(self):
         self.running(False)
         self.__switch_to_state_function(StateType.sundial_state)
+
+    def clear(self):
+        self.service.weather_data_controller.log_off_three_hourely_listener(self.__register_for_weather_data_function)

@@ -1,5 +1,6 @@
 from __future__ import annotations
 import asyncio
+import pprint
 import threading
 import time
 import requests
@@ -9,8 +10,8 @@ from controller.AbstractController import AbstractController
 class WeatherDataController(AbstractController):
     API_KEY_OPEN_WEATHER = "56a81dcf3778961c19b1ce122dc8e450"
     API_KEY_WEATHER_BIT = "f8cf8bde822d4e1fb79d5b0d5af103b2"
-    lat = "50.8370784"
-    lon = "7.3315471"
+    lat = "50.85580690844865"
+    lon = "7.340034524137979"
     exclude = "minutely"
     url_open_weather = f"https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API_KEY_OPEN_WEATHER}"
     url_weatherBit = f"https://api.weatherbit.io/v2.0/forecast/minutely?,NC&key={API_KEY_WEATHER_BIT}&units=I&lat={lat}&lon={lon}"
@@ -51,9 +52,10 @@ class WeatherDataController(AbstractController):
             return
         self.__minute_precip_forecast.clear()
         data = response.json()
+        pprint.pprint(data)
         for entry in data["data"]:
             precip = entry["precip"]
-            if precip >= 0.6:
+            if precip >= 0.5:
                 minute = int(entry["timestamp_local"][14:16])
                 self.__minute_precip_forecast.append((minute, precip))
                 print(f"Minute: {minute}, Regenwahrscheinlichkeit: {precip * 100}%")
@@ -64,6 +66,7 @@ class WeatherDataController(AbstractController):
             return
         self.__three_hour_forecast.clear()
         data = response.json()
+        pprint.pprint(data)
         weather_entries = data["list"]
         for entry in weather_entries[0:8]:
             time = int(entry["dt_txt"][11:13])
@@ -74,14 +77,14 @@ class WeatherDataController(AbstractController):
         self.__minutely_weather_update_listener.append(listener)
         listener(self.minute_precip_forecast)
 
-    def log_off_three_hourely_listener(self, listener):
+    def register_three_hourely_listener(self, listener):
         self.__hourely_weather_update_listener.append(listener)
         listener(self.three_hour_forecast)
 
     def log_off_minutely_listener(self, listener):
         self.__minutely_weather_update_listener.remove(listener)
 
-    def unregister_three_hourely_listener(self, listener):
+    def log_off_three_hourely_listener(self, listener):
         self.__hourely_weather_update_listener.remove(listener)
 
     def start(self):
