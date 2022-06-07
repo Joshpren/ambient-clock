@@ -1,6 +1,3 @@
-from turtle import position
-
-
 class ArithmeticLogicUnit:
 
     def __init__(self, number_of_led, position_of_start):

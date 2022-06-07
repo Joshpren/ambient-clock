@@ -7,6 +7,7 @@ class Color:
         self.__red = red
         self.__blue = green
         self.__green = blue
+        self.__brightness = 1.0
         self.__white = 0
 
     @classmethod
@@ -24,7 +25,7 @@ class Color:
 
     @property
     def red(self):
-        return self.__red
+        return self.__red * self.__brightness
 
     @red.setter
     def red(self, new_red):
@@ -32,7 +33,7 @@ class Color:
 
     @property
     def blue(self):
-        return self.__blue
+        return self.__blue * self.__brightness
 
     @blue.setter
     def blue(self, new_blue):
@@ -40,11 +41,19 @@ class Color:
 
     @property
     def green(self):
-        return self.__green
+        return self.__green * self.__brightness
 
     @green.setter
     def green(self, new_green):
         self.__green = new_green
+
+    @property
+    def brightness(self):
+        return self.__brightness
+
+    @brightness.setter
+    def brightness(self, new_brightness):
+        self.__brightness = new_brightness
 
     def __repr__(self) -> str:
         return "Color(" + str(self.__red) + "," + str(self.__green) + "," + str(self.__blue) + ")"

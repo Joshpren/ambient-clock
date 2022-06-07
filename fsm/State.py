@@ -5,17 +5,15 @@ class State(ABC):
     pass
 
     def __init__(self):
-        self.__running = False
-        self.__context = None
+        self.__service_provider = None
 
-    def start(self, context):
-        self.__context = context
-        self.running(True)
-        self.address_leds()
+    def init(self, service):
+        self.__service_provider = service
+        self.start()
 
     @property
-    def context(self):
-       return self.__context
+    def service(self):
+       return self.__service_provider
 
     @abstractmethod
     def address_leds(self):
@@ -32,3 +30,7 @@ class State(ABC):
     @property
     def get_running(self):
         return self.__running
+
+    @abstractmethod
+    def clear(self):
+        print()
