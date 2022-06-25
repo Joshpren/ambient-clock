@@ -66,7 +66,4 @@ class ClockController(AbstractController):
     @classmethod
     def init(cls, number_of_leds, position_of_start, color_controller, weather_data_controller) -> ClockController:
         controller = ClockController(number_of_leds, position_of_start, color_controller, weather_data_controller)
-        clockThread = threading.Thread(target=controller.start, args=())
-        clockThread.daemon = True
-        clockThread.start()
         return controller

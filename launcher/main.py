@@ -12,11 +12,13 @@ class Launcher:
     color_controller = ColorController.init()
     weather_data_controller = WeatherDataController.init()
     controller = ClockController.init(int(input("Wie viele LEDs werden verwendet")), 0, color_controller, weather_data_controller)
+    clockThread = threading.Thread(target=controller.start, args=())
+    clockThread.daemon = True
+    clockThread.start()
 
     try:
         while True:
             userInput = input()
-            print("Hallo")
             if userInput == "q":
                 running = False
                 print("Exit")

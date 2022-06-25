@@ -9,7 +9,7 @@ class ArithmeticLogicUnit:
         new_index = int(((index + self.number_of_leds / 2) % self.number_of_leds))
         return new_index
 
-    def __relative_position_of_start(self, real_index) -> int:
+    def relative_position_of_start(self, real_index) -> int:
         relative_index = int(((real_index + self.position_of_start) % self.number_of_leds))
         return relative_index
 
@@ -33,21 +33,21 @@ class ArithmeticLogicUnit:
             ordinalClockRepresentation -= 12
         delay = int(numberOfLEDsBetweenTwoHours * (minutes /  60))
         absolut_hour_index = int(ordinalClockRepresentation * numberOfLEDsBetweenTwoHours + delay)
-        return self.__relative_position_of_start(absolut_hour_index)
+        return self.relative_position_of_start(absolut_hour_index)
 
     def determine_index_by_minutes(self, minutes, seconds):
         multiplicator = self.number_of_leds / 60
         minutes *= multiplicator
         delay = int(multiplicator * (seconds / 60))
         absolut_minute_index = int(minutes + delay)
-        return self.__relative_position_of_start(absolut_minute_index)
+        return self.relative_position_of_start(absolut_minute_index)
 
     def determine_index_by_seconds(self, seconds, microseconds):
         multiplicator = self.number_of_leds / 60
         seconds *= multiplicator
         delay = int(microseconds*(10**-6)*int(multiplicator))
         absolut_second_index = int(seconds + delay)
-        return self.__relative_position_of_start(absolut_second_index)
+        return self.relative_position_of_start(absolut_second_index)
 
     def determine_sundial_index_by_hours(self, hours, minutes):
         return self.__switchBy180Degrees(self.determine_index_by_hours(hours, minutes))

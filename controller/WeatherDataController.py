@@ -1,5 +1,6 @@
 from __future__ import annotations
 import asyncio
+from datetime import datetime
 import pprint
 import threading
 import time
@@ -21,6 +22,9 @@ class WeatherDataController(AbstractController):
         self.__minute_precip_forecast = []
         self.__minutely_weather_update_listener = []
         self.__hourely_weather_update_listener = []
+        self.__sunrise = None
+        self.__sunset = None
+
 
     @property
     def three_hour_forecast(self) -> []:
@@ -31,7 +35,7 @@ class WeatherDataController(AbstractController):
         return self.__minute_precip_forecast
 
     async def load_weather_data(self):
-        print("Load new Weather Data")
+        print("Load new Weather Data", datetime.now())
         await asyncio.gather(self.load_minute_forecast(), self.load_three_hour_forecast())
 
     async def load_three_hour_forecast(self):
@@ -52,10 +56,9 @@ class WeatherDataController(AbstractController):
             return
         self.__minute_precip_forecast.clear()
         data = response.json()
-        pprint.pprint(data)
         for entry in data["data"]:
             precip = entry["precip"]
-            if precip >= 0.5:
+            if precip >= 0.05:
                 minute = int(entry["timestamp_local"][14:16])
                 self.__minute_precip_forecast.append((minute, precip))
                 print(f"Minute: {minute}, Regenwahrscheinlichkeit: {precip * 100}%")
@@ -66,8 +69,10 @@ class WeatherDataController(AbstractController):
             return
         self.__three_hour_forecast.clear()
         data = response.json()
-        pprint.pprint(data)
         weather_entries = data["list"]
+        self.__sunrise = datetime.fromtimestamp(data["city"]["sunrise"])
+        self.__sunset = datetime.fromtimestamp(data["city"]["sunset"])
+        print(self.__sunrise)
         for entry in weather_entries[0:8]:
             time = int(entry["dt_txt"][11:13])
             temperature = int(round(float(entry["main"]["temp_max"]) - 273.15, 0))  # Kelvin to Celcius.
@@ -99,3 +104,4 @@ class WeatherDataController(AbstractController):
         thread.daemon = True
         thread.start()
         return controller
+

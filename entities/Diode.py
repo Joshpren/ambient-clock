@@ -4,6 +4,7 @@ class Diode:
         self.__index = index
         self.__color = color
 
+
     @property
     def index(self):
         return self.__index
