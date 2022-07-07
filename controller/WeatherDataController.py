@@ -35,7 +35,7 @@ class WeatherDataController(AbstractController):
         return self.__minute_precip_forecast
 
     async def load_weather_data(self):
-        print("Load new Weather Data", datetime.now())
+        print("Load new Weather Data at", datetime.now())
         await asyncio.gather(self.load_minute_forecast(), self.load_three_hour_forecast())
 
     async def load_three_hour_forecast(self):
@@ -72,7 +72,6 @@ class WeatherDataController(AbstractController):
         weather_entries = data["list"]
         self.__sunrise = datetime.fromtimestamp(data["city"]["sunrise"])
         self.__sunset = datetime.fromtimestamp(data["city"]["sunset"])
-        print(self.__sunrise)
         for entry in weather_entries[0:8]:
             time = int(entry["dt_txt"][11:13])
             temperature = int(round(float(entry["main"]["temp_max"]) - 273.15, 0))  # Kelvin to Celcius.

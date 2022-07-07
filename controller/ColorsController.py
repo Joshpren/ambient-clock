@@ -6,9 +6,9 @@ class ColorController(AbstractController):
 
     def __init__(self):
         self.__colors_to_use = []
-        self.__hour_hand_color = Color.white(150)
-        self.__minute_hand_color = Color.white(200)
-        self.__second_hand_color = Color.white(255)
+        self.__hour_hand_color = Color.white(0.7)
+        self.__minute_hand_color = Color.white(0.8)
+        self.__second_hand_color = Color.white(0.9)
         self.__rain_color = Color(65, 178, 240)
 
     @property

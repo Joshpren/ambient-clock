@@ -1,3 +1,4 @@
+from math import ceil
 from random import randrange
 
 
@@ -12,9 +13,9 @@ class Color:
 
     @classmethod
     def white(cls, brightness):
-        if(brightness < 0 or brightness > 255):
-            return cls(0, 0, 0)
-        return cls(brightness, brightness, brightness)
+        color = cls(255, 255, 255)
+        color.brightness = brightness
+        return color
 
     @classmethod
     def random(cls):
@@ -56,16 +57,28 @@ class Color:
         self.__brightness = new_brightness
 
     @classmethod
+    def mix(cls, colors):
+        red = 0
+        green = 0
+        blue = 0
+        for color in colors:
+            red += color.red
+            green += color.green
+            blue += color.blue
+
+        red = ceil(red / len(colors))
+        green = ceil(green / len(colors))
+        blue = ceil(blue / len(colors))
+        return Color(red, green, blue)
+
+    @classmethod
     def copy(cls, color, brightness):
         copy_color = Color(color.__red, color.__green, color.__blue)
-        if brightness:
-            copy_color.brightness = brightness
-        else:
-            copy_color.brightness = color.brightness
-
+        copy_color.brightness = brightness
         return copy_color
 
 
     def __repr__(self) -> str:
         return "Color(" + str(self.red) + "," + str(self.green) + "," + str(self.blue) + ")"
 
+print(Color.mix([Color(111,222,33), Color(56, 90, 130), Color(156, 23, 65)]))

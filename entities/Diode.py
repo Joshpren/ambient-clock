@@ -13,5 +13,9 @@ class Diode:
     def color(self):
         return self.__color
 
+    @color.setter
+    def color(self, new_color):
+        self.__color = new_color
+
     def __repr__(self) -> str:
         return "Diode: " + str(self.index) + ", " + str(self.__color)

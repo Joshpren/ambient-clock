@@ -12,15 +12,16 @@ from fsm.StateType import StateType
 class OrdinalState(State, ABC):
     pass
 
-    def __init__(self, address_led_function, show_hands_function, clear_diode_function, switch_to_state_function):
-        self.__address_led_function = address_led_function
-        self.__show_hands_function = show_hands_function
-        self.__clear_diode_function = clear_diode_function
+    current_indices = [0, 0, 0]
+
+    def __init__(self, switch_to_state_function):
         self.__switch_to_state_function = switch_to_state_function
+        self.__indices_to_address = {}
         self.__register_for_weather_data_function = lambda data: self.__update_weather_data(data)
-        self.__transmission_controller = None
-        self.__display_rainy_minutes = False
+        self.__transmission_controller = TransmissionController(120)
+        self.__display_rainy_minutes = True
         self.__rainy_indices = []
+
 
     @property
     def transmission_controller(self):
@@ -36,24 +37,50 @@ class OrdinalState(State, ABC):
 
     def address_leds(self):
         current_time = datetime.datetime.now()
-        indices = self.determine_indices(current_time)
-        self.__address_led_function(Diode(indices[0], self.service.colors_controller.hour_hand_color))
-        self.__address_led_function(Diode(indices[1], self.service.colors_controller.minute_hand_color))
-        self.__address_led_function(Diode(indices[2], self.service.colors_controller.second_hand_color))
-        if self.__transmission_controller:
-            darkening, brightnening = self.__transmission_controller.transmission(current_time.microsecond)
-            self.__address_led_function(Diode(indices[2]-1, Color.copy(self.service.colors_controller.second_hand_color, darkening)))
-            self.__address_led_function(Diode(indices[2]+1, Color.copy(self.service.colors_controller.second_hand_color, brightnening)))
+        self.__insert(self.determine_indices(current_time))
+        for diode in self.__indices_to_address.values():
+            self.service.led_event_handler.address_diode(diode)
+        self.service.led_event_handler.show()
+        self.__indices_to_address.clear()
+        time.sleep(0.5)
+
+        #if self.__transmission_controller:
+         #   darkening, brightnening = self.__transmission_controller.seconds_transmission(current_time.second,current_time.microsecond, self.service.colors_controller.second_hand_color.brightness)
+          #  self.__address_led_function(Diode(self.second_hand_index, Color.copy(self.service.colors_controller.second_hand_color, darkening)))
+           # self.__address_led_function(Diode(self.second_hand_index+1, Color.copy(self.service.colors_controller.second_hand_color, brightnening)))
+           # print(darkening, brightnening)
+        #else:
+        #    self.__address_led_function(Diode(indices[2], self.service.colors_controller.second_hand_color))
         #for index in self.__rainy_indices:
         #    self.__address_led_function(Diode(index, self.service.colors_controller.rain_color))
-        self.__show_hands_function()
-        time.sleep(0.015)
+
 
     def determine_indices(self, current_time):
-        hour_index = self.service.arithmetic_logic_unit.determine_index_by_hours(current_time.hour, current_time.minute)
-        minute_index = self.service.arithmetic_logic_unit.determine_index_by_minutes(current_time.minute, current_time.second)
-        second_index = self.service.arithmetic_logic_unit.determine_index_by_seconds(current_time.second, current_time.microsecond)
-        return [hour_index, minute_index, second_index]
+        hour_hand_index = self.service.arithmetic_logic_unit.determine_index_by_hours(current_time.hour, current_time.minute)
+        minute_hand_index = self.service.arithmetic_logic_unit.determine_index_by_minutes(current_time.minute, current_time.second)
+        second_hand_index = self.service.arithmetic_logic_unit.determine_index_by_seconds(current_time.second, current_time.microsecond)
+        return (hour_hand_index, minute_hand_index, second_hand_index)
+
+    def __insert(self, indices):
+        for rainy_index in self.__rainy_indices:
+            self.__indices_to_address.insert(rainy_index, Diode(rainy_index, self.service.colors_controller.rain_color))
+        colors_to_use = (self.service.colors_controller.hour_hand_color, self.service.colors_controller.minute_hand_color, self.service.colors_controller.second_hand_color)
+        for index in range(len(indices)):
+            if self.current_indices[index] != indices[index] and self.current_indices[index] not in self.__rainy_indices:
+                self.__turn_off(self.current_indices[index])
+            self.current_indices[index] = indices[index]
+            diode = self.__indices_to_address.get(indices[index])
+            color = colors_to_use[index]
+            if diode:
+                color = Color.mix([diode.color, color])
+                diode.color = color
+                self.__indices_to_address[indices[index]] = diode
+            else:
+                self.__indices_to_address[indices[index]] = Diode(indices[index], colors_to_use[index])
+
+    def __turn_off(self, index_to_turn_off):
+        self.service.led_event_handler.turn_off_diode(index_to_turn_off)
+
 
     # Weather Data provided by the weather-data-controller will be requested. This weather data containing entries
     # for each minute which has more than a 60 percent probability of precipitation. The minute is stored on the first index of the data object.
@@ -61,7 +88,7 @@ class OrdinalState(State, ABC):
     # one led-diode. The relative section which represents one minute will be calculated and also illuuminated.
     def __update_weather_data(self, weather_data):
         self.__rainy_indices.clear()
-        diodes_per_one_minute = self.service.number_of_led / 60
+        diodes_per_one_minute = self.service.led_count / 60
         for data in weather_data:
             start = int(data[0] * diodes_per_one_minute)
             end = int(start + diodes_per_one_minute)
@@ -73,4 +100,3 @@ class OrdinalState(State, ABC):
 
     def clear(self):
         self.service.weather_data_controller.log_off_minutely_listener(self.__register_for_weather_data_function)
-
