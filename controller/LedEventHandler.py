@@ -13,8 +13,14 @@ class LedEventHandler:
     def address_diode(self, diode):
         self.__led_strip.address_diode(diode)
 
+    def address_diodes(self, diodes):
+        self.__led_strip.address_diodes(diodes)
+
     def turn_off_diode(self, index):
         self.__led_strip.turn_off_diode(index)
+
+    def clear_strip(self):
+        self.__led_strip.clear_strip()
 
     def show(self):
         self.__led_strip.show()

@@ -27,12 +27,10 @@ class ArithmeticLogicUnit:
         return int(self.__revert_relative_index(index) / (self.number_of_leds / 60))
 
     def determine_index_by_hours(self, hours, minutes):
-        numberOfLEDsBetweenTwoHours = self.number_of_leds / 12
-        ordinalClockRepresentation = hours
-        if hours > 12:
-            ordinalClockRepresentation -= 12
-        delay = int(numberOfLEDsBetweenTwoHours * (minutes /  60))
-        absolut_hour_index = int(ordinalClockRepresentation * numberOfLEDsBetweenTwoHours + delay)
+        number_of_LEDs_between_two_hours = self.number_of_leds / 12
+        analog_clock_representation = hours%12
+        delay = int(number_of_LEDs_between_two_hours * (minutes /  60))
+        absolut_hour_index = int(analog_clock_representation * number_of_LEDs_between_two_hours + delay)
         return self.relative_position_of_start(absolut_hour_index)
 
     def determine_index_by_minutes(self, minutes, seconds):

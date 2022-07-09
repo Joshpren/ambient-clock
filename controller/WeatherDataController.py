@@ -58,7 +58,7 @@ class WeatherDataController(AbstractController):
         data = response.json()
         for entry in data["data"]:
             precip = entry["precip"]
-            if precip >= 0.05:
+            if precip >= 0.1:
                 minute = int(entry["timestamp_local"][14:16])
                 self.__minute_precip_forecast.append((minute, precip))
                 print(f"Minute: {minute}, Regenwahrscheinlichkeit: {precip * 100}%")

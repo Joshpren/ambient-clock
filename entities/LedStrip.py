@@ -8,6 +8,7 @@ class LedStrip:
 
     def __init__(self, led_count):
         self.__led_count = led_count
+        self.__active_diodes = []
         temp = []
         for index in range(led_count):
             temp.append(Color(0, 0, 0))
@@ -18,10 +19,22 @@ class LedStrip:
         return self.__led_count
 
     def address_diode(self, diode):
-        self.__strip[diode.index] = diode.color
+        index = diode.index
+        self.__strip[index] = diode.color
+        self.__active_diodes.append(index)
+
+    def address_diodes(self, diodes):
+        for diode in diodes:
+            self.address_diode(diode)
 
     def turn_off_diode(self, index):
         self.__strip[index] = Color(0, 0, 0)
+
+    def clear_strip(self):
+        for index in self.__active_diodes:
+            self.turn_off_diode(index)
+        self.__active_diodes.clear()
+
 
     def show(self):
         print(self.__strip)

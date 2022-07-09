@@ -7,7 +7,7 @@ from controller.AbstractController import AbstractController
 from core.ServiceProvider import ServiceProvider
 from fsm.AmbientState import AmbientState
 from fsm.ErrorState import ErrorState
-from fsm.OrdinalState import OrdinalState
+from fsm.AnalogState import AnalogState
 from fsm.StateType import StateType
 from fsm.SundialState import SundialState
 from fsm.WeatherState import WeatherState
@@ -16,13 +16,13 @@ class ClockController(AbstractController):
 
     def __init__(self,  service):
         self.__service = service
-        self.__current_state = OrdinalState(lambda new_state : self.switch_to_state(new_state))
+        self.__current_state = AnalogState(lambda new_state : self.switch_to_state(new_state))
 
     def switch_to_state(self, new_state):
         self.__current_state.clear()
         state = None
         if new_state == StateType.ordinal_state:
-            state = OrdinalState(lambda new_state : self.switch_to_state(new_state))
+            state = AnalogState(lambda new_state : self.switch_to_state(new_state))
         elif new_state == StateType.sundial_state:
             state = SundialState(lambda new_state : self.switch_to_state(new_state))
         elif new_state == StateType.ambient_state:
