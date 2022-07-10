@@ -11,9 +11,7 @@ import wled as wled
 class AmbientState(State, ABC):
     pass
 
-    def __init__(self, address_led_function, show_diodes_function, switch_to_state_function):
-        self.__address_led_function = address_led_function
-        self.__show_diodes_function = show_diodes_function
+    def __init__(self, switch_to_state_function):
         self.__switch_to_state_function = switch_to_state_function
 
 

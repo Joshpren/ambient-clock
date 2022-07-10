@@ -2,6 +2,7 @@ import threading
 from math import ceil, floor
 
 from controller.LedEventHandler import LedEventHandler
+from controller.TransmissionController import TransmissionController
 from controller.WeatherDataController import WeatherDataController
 from controller.ClockController import ClockController
 from controller.ColorsController import ColorController
@@ -32,6 +33,11 @@ class Launcher:
                     clock_controller.switch_to_state(StateType.weather_state)
                 elif userInput == "o":
                     clock_controller.switch_to_state(StateType.ordinal_state)
+                elif userInput == "t":
+                    if clock_controller.service.transmission_controller:
+                        clock_controller.service.transmission_controller = None
+                    else:
+                        clock_controller.service.transmission_controller = TransmissionController(clock_controller.service.led_count)
                 print(threading.get_native_id())
         except KeyboardInterrupt:
             pass

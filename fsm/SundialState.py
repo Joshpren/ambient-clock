@@ -2,8 +2,6 @@ import datetime
 import logging
 import time
 from abc import ABC
-
-from controller.TransmissionController import TransmissionController
 from entities.Color import Color
 from entities.Diode import Diode
 from fsm.State import State
@@ -15,21 +13,10 @@ class SundialState(State, ABC):
 
     def __init__(self, switch_to_state_function):
         self.__switch_to_state_function = switch_to_state_function
-        self.__transmission_controller = None
-
-
-    @property
-    def transmission_controller(self):
-        return self.__transmission_controller
-
-    @transmission_controller.setter
-    def transmission_controller(self, transmission_controller):
-        self.__transmission_controller = transmission_controller
 
     def start(self):
         logging.info("SunDial-State has been started!")
         print("SunDial-State has been started!")
-        self.__transmission_controller = TransmissionController(self.service.led_count)
 
     def address_leds(self):
         current_time = datetime.datetime.now()
@@ -54,11 +41,10 @@ class SundialState(State, ABC):
             order = orders[index]
             color = colors_to_use[index]
             diode_index = indices[index]
-            if self.__transmission_controller:
-                darkening, brightnening = self.__transmission_controller.transmission(order, current_time)
+            if self.service.transmission_controller:
+                darkening, brightnening = self.service.transmission_controller.transmission(order, current_time)
                 diodes.append(Diode(diode_index, Color.copy(color, darkening * color.brightness)))
-                diodes.append(Diode((diode_index + 1) % self.service.led_count,
-                                    Color.copy(color, brightnening * color.brightness)))
+                diodes.append(Diode((diode_index + 1) % self.service.led_count, Color.copy(color, brightnening * color.brightness)))
             else:
                 diodes.append(Diode(diode_index, color))
         return diodes

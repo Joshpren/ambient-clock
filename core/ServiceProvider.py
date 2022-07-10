@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+from controller import TransmissionController, LedEventHandler
 from controller.ColorsController import ColorController
 from controller.WeatherDataController import WeatherDataController
 from core import ArithmeticLogicUnit
@@ -11,10 +13,19 @@ class ServiceProvider:
         self.__colors_controller = colors_controller
         self.__weather_data_controller = weather_data_controller
         self.__led_event_handler = led_event_handler
+        self.__transmission_controller = None
 
     @property
-    def led_event_handler(self):
+    def led_event_handler(self) -> LedEventHandler:
         return self.__led_event_handler
+
+    @property
+    def transmission_controller(self) -> TransmissionController:
+        return self.__transmission_controller
+
+    @transmission_controller.setter
+    def transmission_controller(self, new_transmission_controller):
+        self.__transmission_controller = new_transmission_controller
 
     @property
     def led_count(self) -> int:

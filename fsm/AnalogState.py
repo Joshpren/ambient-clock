@@ -15,21 +15,10 @@ class AnalogState(State, ABC):
     def __init__(self, switch_to_state_function):
         self.__switch_to_state_function = switch_to_state_function
         self.__register_for_weather_data_function = lambda data: self.__update_weather_data(data)
-        self.__transmission_controller = None
         self.__display_rainy_minutes = True
         self.__rainy_indices = []
 
-
-    @property
-    def transmission_controller(self):
-        return self.__transmission_controller
-
-    @transmission_controller.setter
-    def transmission_controller(self, transmission_controller):
-        self.__transmission_controller = transmission_controller
-
     def start(self):
-        self.__transmission_controller = TransmissionController(self.service.led_count)
         if self.__display_rainy_minutes == True:
             self.service.weather_data_controller.register_minutely_listener(self.__register_for_weather_data_function)
 
@@ -56,8 +45,8 @@ class AnalogState(State, ABC):
             order = orders[index]
             color = colors_to_use[index]
             diode_index = indices[index]
-            if self.__transmission_controller:
-                    darkening, brightnening = self.__transmission_controller.transmission(order, current_time)
+            if self.service.transmission_controller:
+                    darkening, brightnening = self.service.transmission_controller.transmission(order, current_time)
                     diodes.append(Diode(diode_index, Color.copy(color, darkening*color.brightness)))
                     diodes.append(Diode((diode_index + 1)%self.service.led_count, Color.copy(color, brightnening*color.brightness)))
             else:

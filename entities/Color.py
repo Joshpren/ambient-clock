@@ -80,5 +80,3 @@ class Color:
 
     def __repr__(self) -> str:
         return "Color(" + str(self.red) + "," + str(self.green) + "," + str(self.blue) + ")"
-
-print(Color.mix([Color(111,222,33), Color(56, 90, 130), Color(156, 23, 65)]))

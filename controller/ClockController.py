@@ -18,6 +18,10 @@ class ClockController(AbstractController):
         self.__service = service
         self.__current_state = AnalogState(lambda new_state : self.switch_to_state(new_state))
 
+    @property
+    def service(self) -> ServiceProvider:
+        return self.__service
+
     def switch_to_state(self, new_state):
         self.__current_state.clear()
         state = None
@@ -47,7 +51,9 @@ class ClockController(AbstractController):
                 self.__current_state.address_leds()
             except:
                 print(traceback.format_exc())
-                self.__current_state = ErrorState(None)
+                error_state = ErrorState(None)
+                error_state.init(self.__service)
+                self.__current_state = error_state
 
     @classmethod
     def init(cls, service) -> ClockController:
