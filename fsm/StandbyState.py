@@ -19,8 +19,11 @@ class StandbyState(State, ABC):
         print("Standby-State has been started!")
         self.service.led_event_handler.clear_strip().show()
 
+    def run(self):
+        self.address_leds()
+
     def address_leds(self):
-        time.sleep(5)
+        pass
 
     def react_on_motion(self):
         self.running(False)

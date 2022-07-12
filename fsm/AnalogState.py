@@ -3,6 +3,7 @@ import time
 from abc import ABC
 from timeit import default_timer as timer
 from controller.TransmissionController import TransmissionController
+from effects.Carousel import CarouselEffect
 from entities.Color import Color
 from entities.Diode import Diode
 from fsm.State import State
@@ -22,12 +23,15 @@ class AnalogState(State, ABC):
         if self.__display_rainy_minutes == True:
             self.service.weather_data_controller.register_minutely_listener(self.__register_for_weather_data_function)
 
+    def run(self):
+        self.address_leds()
+
     def address_leds(self):
+        self.service.led_event_handler.clear_strip()
         current_time = datetime.datetime.now()
         indices_to_address = self.__determine_indices_to_address(current_time)
         self.service.led_event_handler.address_diodes(indices_to_address.values())
         self.service.led_event_handler.show()
-        self.service.led_event_handler.clear_strip()
         time.sleep(0.1)
 
     def __determine_time_diodes(self, current_time):
@@ -87,4 +91,5 @@ class AnalogState(State, ABC):
 
     def clear(self):
         self.service.weather_data_controller.log_off_minutely_listener(self.__register_for_weather_data_function)
+        CarouselEffect(self.service.led_event_handler, self.service.colors_controller).build_up()
 

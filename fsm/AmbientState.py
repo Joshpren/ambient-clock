@@ -5,8 +5,6 @@ from entities.Color import Color
 from entities.Diode import Diode
 from fsm.StateType import StateType
 from fsm.State import State
-import wled as wled
-
 
 class AmbientState(State, ABC):
     pass
@@ -14,6 +12,9 @@ class AmbientState(State, ABC):
     def __init__(self, switch_to_state_function):
         self.__switch_to_state_function = switch_to_state_function
 
+
+    def run(self):
+        self.address_leds()
 
     def address_leds(self):
         self.color_wipe()

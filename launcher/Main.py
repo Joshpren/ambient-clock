@@ -38,7 +38,6 @@ class Launcher:
                         clock_controller.service.transmission_controller = None
                     else:
                         clock_controller.service.transmission_controller = TransmissionController(clock_controller.service.led_count)
-                print(threading.get_native_id())
         except KeyboardInterrupt:
             pass
 
@@ -55,9 +54,7 @@ class Launcher:
 
 
 controller, color_controller = Launcher.init(Launcher)
-inputThread = threading.Thread(target=Launcher.userInput, args=(controller, color_controller))
-inputThread.daemon = True
-inputThread.start()
 controller.start()
+Launcher.userInput(controller, color_controller)
 
 SystemExit

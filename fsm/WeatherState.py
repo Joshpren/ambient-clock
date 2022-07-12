@@ -16,6 +16,9 @@ class WeatherState(State, ABC):
     def start(self):
         self.service.weather_data_controller.register_three_hourely_listener(self.__register_for_weather_data_function)
 
+    def run(self):
+        self.address_leds()
+
     def address_leds(self):
         # for data in self.__weather_data:
         #     hour = data[0]

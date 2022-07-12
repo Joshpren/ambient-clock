@@ -15,6 +15,10 @@ class ErrorState(State, ABC):
         logging.info("Error-State has been started!")
         print("Error-State has been started!")
 
+    def run(self, event):
+        while not event.is_set():
+            self.address_leds()
+
     def address_leds(self):
         for brightness in range(1,100):
             for index in range(self.service.led_count):
@@ -30,7 +34,7 @@ class ErrorState(State, ABC):
         time.sleep(0.02)
 
     def react_on_motion(self):
-        print("Error")
+        pass
 
     def clear(self):
         logging.info("Error-State has been cleared")

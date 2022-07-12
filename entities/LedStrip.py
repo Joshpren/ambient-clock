@@ -1,6 +1,4 @@
-from core.ClockPrinter import ClockPrinter
 from entities.Color import Color
-
 
 class LedStrip:
 
@@ -19,6 +17,7 @@ class LedStrip:
 
     def address_diode(self, index, red, green, blue):
         self.__active_diodes.append(index)
+        self.__strip[index] = Color(red, green, blue)
 
     def turn_off_diode(self, index):
         self.__strip[index] = Color(0, 0, 0)

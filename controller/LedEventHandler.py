@@ -17,7 +17,7 @@ class LedEventHandler:
 
     def address_diodes(self, diodes):
         for diode in diodes:
-            self.__led_strip.address_diode(diodes)
+            self.address_diode(diode)
         return self
 
     def turn_off_diode(self, index):

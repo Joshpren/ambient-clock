@@ -14,7 +14,7 @@ class ColorController(AbstractController):
     @property
     def colors_to_use(self):
         if len(self.__colors_to_use) == 0:
-            return [Color.random() * 4]
+            return [Color.random()]*4
         else:
             return self.__colors_to_use
 
@@ -74,7 +74,7 @@ class ColorController(AbstractController):
 
     def start(self):
         #do nothing
-        print()
+        pass
 
     @classmethod
     def init(cls) -> ColorController:

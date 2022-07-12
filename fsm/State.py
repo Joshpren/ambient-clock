@@ -21,7 +21,7 @@ class State(ABC):
 
     @abstractmethod
     def react_on_motion(self):
-        print()
+        pass
 
 
     def running(self, running):
@@ -32,5 +32,13 @@ class State(ABC):
         return self.__running
 
     @abstractmethod
+    def start(self):
+        pass
+
+    @abstractmethod
+    def run(self):
+        pass
+
+    @abstractmethod
     def clear(self):
-        print()
+        pass

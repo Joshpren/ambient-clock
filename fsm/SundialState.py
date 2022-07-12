@@ -2,6 +2,8 @@ import datetime
 import logging
 import time
 from abc import ABC
+
+from effects.Carousel import CarouselEffect
 from entities.Color import Color
 from entities.Diode import Diode
 from fsm.State import State
@@ -17,6 +19,10 @@ class SundialState(State, ABC):
     def start(self):
         logging.info("SunDial-State has been started!")
         print("SunDial-State has been started!")
+        CarouselEffect(self.service.led_event_handler, self.service.colors_controller).build_down()
+
+    def run(self):
+        self.address_leds()
 
     def address_leds(self):
         current_time = datetime.datetime.now()
